@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>event test</title>
@@ -11,32 +11,40 @@
 </head>
 
 <body>
-form test success
+option test success
 <div id="testDiv">
-    <label>姓名
-        <input type="text" v-model="name" placeholder="input name"/>
-    </label>
-    <label>性别
-        <select v-model="sex">
-            <option selected>男</option>
-            <option>女</option>
-        </select>
-    </label>
+    <select v-model="selected">
+        <option v-for="option in options" v-bind:value="option.name">
+            {{option.name}}
+        </option>
+    </select>
+    <span>selected option:{{ selected }}</span>
     <button @click="submit">提交</button>
 </div>
+
+<#list infos as info>
+    <#if info.name??>
+        ${info.name?substring(0,2)}
+    <#else>
+        fail
+    </#if>
+</#list>
 </body>
 <script>
     new Vue({
         el: '#testDiv',
         data: {
-            name: '',
-            sex: ''
+            selected: '',
+            options: ''
+        },
+        mounted() {
+            axios.post("/event/listData", {}).then(response => (this.options = response.data));
+
         },
         methods: {
             submit: function () {
-                axios.post("/event/axiosData",{
-                    name: this.name,
-                    sex: this.sex
+                axios.post("/event/axiosData", {
+                    name: this.selected,
                 }).then(response => console.log(response.data.id));
             }
         }
